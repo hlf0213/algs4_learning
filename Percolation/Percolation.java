@@ -1,16 +1,15 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdIn;
 
 public class Percolation {
     private WeightedQuickUnionUF sites;
+    private WeightedQuickUnionUF auxSites;
     private boolean[] status;
     private int N;
     private int length;
     private int numberOfOpenSites;
 
     private int calIdx(int row, int col) {
-        return (row - 1) * length + col - 1;
+        return (row - 1) * length + col;
     }
 
     public Percolation(int n) {
@@ -21,6 +20,7 @@ public class Percolation {
         N = n * n + 2;
         length = n;
         sites = new WeightedQuickUnionUF(N);
+        auxSites = new WeightedQuickUnionUF(N);
         status = new boolean[N];
         numberOfOpenSites = 0;
 
@@ -40,19 +40,24 @@ public class Percolation {
 
         if (row != 1 && isOpen(row - 1, col)) { // up
             sites.union(idx, idx - length);
+            auxSites.union(idx, idx - length);
         }
         if (row != length && isOpen(row + 1, col)) { // down
             sites.union(idx, idx + length);
+            auxSites.union(idx, idx + length);
         }
         if (col != 1 && isOpen(row, col - 1)) { // left
             sites.union(idx, idx - 1);
+            auxSites.union(idx, idx - 1);
         }
         if (col != length && isOpen(row, col + 1)) { // right
             sites.union(idx, idx + 1);
+            auxSites.union(idx, idx + 1);
         }
 
         if (row == 1) {
-            sites.union(idx, N - 2);
+            sites.union(idx, 0);
+            auxSites.union(idx, 0);
         }
         if (row == length) {
             sites.union(idx, N - 1);
@@ -69,8 +74,9 @@ public class Percolation {
     }
 
     public boolean isFull(int row, int col) {
+        int idx = calIdx(row, col);
         if (isOpen(row, col)) {
-            return sites.connected(calIdx(row, col), N - 2);
+            return sites.connected(idx, 0) && auxSites.connected(idx, 0);
         }
         return false;
     }
@@ -81,7 +87,7 @@ public class Percolation {
 
     public boolean percolates() {
         // n - 2, n - 1 means virtual-top and virtual-bottom
-        return sites.connected(N - 2, N - 1);
+        return sites.connected(0, N - 1);
     }
 
     public static void main(String[] args) {

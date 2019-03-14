@@ -5,6 +5,10 @@ import edu.princeton.cs.algs4.StdStats;
 public class PercolationStats {
     private double[] threshold;
     private int T;
+    private double mean;
+    private double stddev;
+    private double confidenceLo;
+    private double confidenceHi;
 
     public PercolationStats(int n, int trails) {
         if (n <= 0 || trails <= 0) {
@@ -21,23 +25,29 @@ public class PercolationStats {
                 int col = StdRandom.uniform(1, n + 1);
                 p.open(row, col);
             }
-            threshold[i] = (double)p.numberOfOpenSites() / (n * n);
+            threshold[i] = (double) p.numberOfOpenSites() / (n * n);
         }
+
+        mean = StdStats.mean(threshold);
+        stddev = StdStats.stddev(threshold);
+        confidenceLo = mean - 1.96 * stddev / Math.sqrt(T);
+        confidenceHi = mean + 1.96 * stddev / Math.sqrt(T);
     }
 
     public double mean() {
-        return StdStats.mean(threshold);
+        return mean;
     }
 
     public double stddev() {
-        return StdStats.stddev(threshold);
+        return stddev;
     }
 
     public double confidenceLo() {
-        return mean() - 1.96 * stddev() / Math.sqrt(T);
+        return confidenceLo;
     }
+
     public double confidenceHi() {
-        return mean() + 1.96 * stddev() / Math.sqrt(T);
+        return confidenceHi;
     }
 
     public static void main(String[] args) {

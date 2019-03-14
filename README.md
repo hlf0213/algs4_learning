@@ -4,5 +4,5 @@
 
 |Item                        | Status  | Grade |
 |:---------------------------|---------|-------|
-|Percolation                 | Passed  | 94%   |
+|Percolation                 | Passed  | 100%  |
 |Deques and Randomized Queues| Passed  | 100%  | 
